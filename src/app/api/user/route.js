@@ -1,8 +1,7 @@
 import getMySQLConnection from "@/lib/mysql";
-import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
-// export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export const PUT = async (request) => {
   try {
@@ -14,13 +13,22 @@ export const PUT = async (request) => {
            WHERE UserID = ?`;
     const data = [Account, Password, Access, UserID];
     await db.query(sql, data);
-    // console.log(res.affectedRows);
 
-    // revalidatePath("/home/usermanage");
     db.end();
-    return NextResponse.json({ status: 200 });
+    return new NextResponse(JSON.stringify({ status: "success" }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (error) {
     console.error("Database connection or query error:", error);
-    return NextResponse.json({ error }, { status: 500 });
+    db?.end();
+    return new NextResponse(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 };

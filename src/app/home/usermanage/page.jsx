@@ -11,8 +11,7 @@ const UserManage = () => {
   const getUser = async () => {
     setSpin(true);
     const response = await fetch("/api/users");
-    const res = await response.json();
-    const { data } = res;
+    const { data } = await response.json();
     setUsers(data);
     setSpin(false);
   };
@@ -77,16 +76,17 @@ const UserManage = () => {
           formData.append(key, values[key]);
         }
         formData.append("UserID", editingUserID);
+        setIsModalVisible(false);
+
         await fetch("/api/user", {
           method: "PUT",
           body: formData,
         });
         await getUser();
-        // window.location.reload();
-        setIsModalVisible(false);
         message.success("User updated successfully");
       })
       .catch((info) => {
+        message.error("User updated failed");
         console.log("Validate Failed:", info);
       });
   };

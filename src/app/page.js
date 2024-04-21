@@ -1,16 +1,25 @@
 "use client";
-
-// pages/login.js
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
   const router = useRouter();
-  const onFinish = (values) => {
-    router.push("/home/usermanage");
-    console.log("Received values of form: ", values);
-    // Here you would handle the login logic, possibly calling an API
+  const onFinish = async (values) => {
+    const formData = new FormData();
+    for (var key in values) {
+      formData.append(key, values[key]);
+    }
+    const response = await fetch("/api/login", {
+      method: "POST",
+      body: formData,
+    });
+    const res = await response.json();
+    if (res.status === "failed") {
+      message.error("Login failed");
+    } else if (res.status === "success") {
+      router.push("/home/usermanage");
+    }
   };
 
   return (
@@ -22,17 +31,17 @@ const LoginPage = () => {
         onFinish={onFinish}
       >
         <Form.Item
-          name="username"
-          rules={[{ required: true, message: "Please input your Username!" }]}
+          name="Account"
+          rules={[{ required: true, message: "Please input your Account!" }]}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Username"
+            placeholder="Account"
           />
         </Form.Item>
 
         <Form.Item
-          name="password"
+          name="Password"
           rules={[{ required: true, message: "Please input your Password!" }]}
         >
           <Input

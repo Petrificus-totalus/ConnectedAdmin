@@ -7,12 +7,23 @@ export const GET = async () => {
   try {
     const db = await getMySQLConnection();
 
-    const [rows] = await db.execute("SELECT * FROM user");
+    const [data] = await db.execute("SELECT * FROM user");
 
     db.end();
-    return NextResponse.json({ data: rows }, { status: 200 });
+    return new NextResponse(JSON.stringify({ data }), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   } catch (error) {
     console.error("Database connection or query error:", error);
-    return NextResponse.json({ error }, { status: 500 });
+    db?.end();
+    return new NextResponse(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   }
 };
