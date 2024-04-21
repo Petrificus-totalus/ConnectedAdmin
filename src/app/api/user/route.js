@@ -2,7 +2,7 @@ import getMySQLConnection from "@/lib/mysql";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+// export const dynamic = "force-dynamic";
 
 export const PUT = async (request) => {
   try {
@@ -16,7 +16,7 @@ export const PUT = async (request) => {
     await db.query(sql, data);
     // console.log(res.affectedRows);
 
-    revalidatePath("/home/usermanage");
+    // revalidatePath("/home/usermanage");
     db.end();
     return NextResponse.json({ status: 200 });
   } catch (error) {
