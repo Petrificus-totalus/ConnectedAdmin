@@ -100,8 +100,6 @@ export default function Story() {
         padding: "30px",
         display: "flex",
         flexDirection: "column",
-        // justifyContent: "space-between",
-        // alignItems: "center",
       }}
     >
       {showForm ? (

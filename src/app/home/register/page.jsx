@@ -81,7 +81,7 @@ export default function ApplicationList() {
           >
             <List.Item.Meta
               title={item.username}
-              description={`Time：${item.date} - UserID：${item.userId}`}
+              description={`Time:${item.date} - UserID:${item.userId}`}
             />
           </List.Item>
         )}
@@ -92,7 +92,7 @@ export default function ApplicationList() {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
       >
-        <p>File：{currentApplication?.fileInfo}</p>
+        <p>File:{currentApplication?.fileInfo}</p>
         <Button
           type="primary"
           onClick={agreeApplication}

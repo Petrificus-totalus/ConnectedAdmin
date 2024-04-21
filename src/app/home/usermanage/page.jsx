@@ -1,77 +1,65 @@
 "use client";
-import React, { useState } from "react";
-import { Table, Button, Modal, Form, Input, Select, message } from "antd";
-
-const { Option } = Select;
-
-// 模拟用户数据
-const mockUsers = [
-  {
-    id: 1,
-    username: "User1",
-    status: "normal",
-    password: "pass123",
-    age: 28,
-    address: "Address 1",
-  },
-  {
-    id: 2,
-    username: "User2",
-    status: "muted",
-    password: "pass456",
-    age: 32,
-    address: "Address 2",
-  },
-  {
-    id: 3,
-    username: "User3",
-    status: "banned",
-    password: "pass789",
-    age: 24,
-    address: "Address 3",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { Table, Button, Modal, Form, Input, message, Spin } from "antd";
 
 const UserManage = () => {
-  const [users, setUsers] = useState(mockUsers);
+  const [spin, setSpin] = useState(true);
+  const [users, setUsers] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
+  const [editingUserID, setEditingUserID] = useState(null);
   const [form] = Form.useForm();
-
+  useEffect(() => {
+    const getUser = async () => {
+      setSpin(true);
+      const response = await fetch("/api/users");
+      const res = await response.json();
+      const { data } = res;
+      setUsers(data);
+      setSpin(false);
+    };
+    getUser();
+  }, []);
   const columns = [
     {
       title: "User ID",
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "UserID",
+      key: "UserID",
     },
     {
-      title: "Username",
-      dataIndex: "username",
-      key: "username",
+      title: "Account",
+      dataIndex: "Account",
+      key: "Account",
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => {
-        const statusColor = {
-          normal: "green",
-          muted: "orange",
-          banned: "red",
-        }[status];
-        return <span style={{ color: statusColor }}>{status}</span>;
-      },
+      title: "Access",
+      dataIndex: "Access",
+      key: "Access",
+    },
+    {
+      title: "AdminID",
+      dataIndex: "AdminID",
+      key: "AdminID",
+    },
+    {
+      title: "Password",
+      dataIndex: "Password",
+      key: "Password",
+    },
+    {
+      title: "CreateDate",
+      dataIndex: "CreateDate",
+      key: "CreateDate",
     },
     {
       title: "Action",
       key: "action",
       render: (_, record) => (
         <Button
+          type="primary"
           onClick={() => {
-            setEditingUser(record);
+            setEditingUserID(record.UserID);
             setIsModalVisible(true);
             form.setFieldsValue(record);
-            console.log(record);
           }}
         >
           Edit
@@ -83,14 +71,17 @@ const UserManage = () => {
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => {
-        const newUsers = users.map((user) => {
-          if (user.id === editingUser.id) {
-            return { ...user, ...values };
-          }
-          return user;
+      .then(async (values) => {
+        const formData = new FormData();
+        for (var key in values) {
+          formData.append(key, values[key]);
+        }
+        formData.append("UserID", editingUserID);
+        await fetch("/api/user", {
+          method: "PUT",
+          body: formData,
         });
-        setUsers(newUsers);
+        window.location.reload();
         setIsModalVisible(false);
         message.success("User updated successfully");
       })
@@ -101,7 +92,10 @@ const UserManage = () => {
 
   return (
     <div>
-      <Table columns={columns} dataSource={users} rowKey="id" />
+      <Spin spinning={spin}>
+        <Table columns={columns} dataSource={users} rowKey="UserID" />
+      </Spin>
+
       <Modal
         title="Edit User"
         open={isModalVisible}
@@ -110,34 +104,22 @@ const UserManage = () => {
       >
         <Form form={form} layout="vertical">
           <Form.Item
-            name="username"
-            label="Username"
+            name="Account"
+            label="Account"
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Select>
-              <Option value="normal">Normal</Option>
-              <Option value="muted">Muted</Option>
-              <Option value="banned">Banned</Option>
-            </Select>
-          </Form.Item>
+
           <Form.Item
-            name="password"
+            name="Password"
             label="Password"
             rules={[{ required: true }]}
           >
             <Input.Password />
           </Form.Item>
-          <Form.Item name="age" label="Age" rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="address"
-            label="Address"
-            rules={[{ required: true }]}
-          >
+
+          <Form.Item name="Access" label="Access" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
         </Form>
