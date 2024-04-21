@@ -8,15 +8,15 @@ const UserManage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingUserID, setEditingUserID] = useState(null);
   const [form] = Form.useForm();
+  const getUser = async () => {
+    setSpin(true);
+    const response = await fetch("/api/users");
+    const res = await response.json();
+    const { data } = res;
+    setUsers(data);
+    setSpin(false);
+  };
   useEffect(() => {
-    const getUser = async () => {
-      setSpin(true);
-      const response = await fetch("/api/users");
-      const res = await response.json();
-      const { data } = res;
-      setUsers(data);
-      setSpin(false);
-    };
     getUser();
   }, []);
   const columns = [
@@ -81,7 +81,8 @@ const UserManage = () => {
           method: "PUT",
           body: formData,
         });
-        window.location.reload();
+        await getUser();
+        // window.location.reload();
         setIsModalVisible(false);
         message.success("User updated successfully");
       })
