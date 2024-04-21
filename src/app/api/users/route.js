@@ -1,6 +1,8 @@
 import getMySQLConnection from "@/lib/mysql";
 import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async () => {
   try {
     const db = await getMySQLConnection();
