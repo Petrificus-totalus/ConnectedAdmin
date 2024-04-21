@@ -11,14 +11,12 @@ export const PUT = async (request) => {
            SET Account = ?, Password = ?, Access = ?
            WHERE UserID = ?`;
     const data = [Account, Password, Access, UserID];
-    const res = await db.query(sql, data);
-    if (res.affectedRows) {
-      revalidatePath("/home/usermanage");
-      db.end();
-      return NextResponse.json({ status: 200 });
-    } else {
-      return NextResponse.json({ error: "update fail" }, { status: 500 });
-    }
+    await db.query(sql, data);
+    // console.log(res.affectedRows);
+
+    revalidatePath("/home/usermanage");
+    db.end();
+    return NextResponse.json({ status: 200 });
   } catch (error) {
     console.error("Database connection or query error:", error);
     return NextResponse.json({ error }, { status: 500 });

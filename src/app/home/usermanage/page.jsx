@@ -10,7 +10,7 @@ const UserManage = () => {
   const [form] = Form.useForm();
   const getUser = async () => {
     setSpin(true);
-    const response = await fetch("/api/users");
+    const response = await fetch("/api/users", { cache: "no-store" });
     const res = await response.json();
     const { data } = res;
     setUsers(data);
