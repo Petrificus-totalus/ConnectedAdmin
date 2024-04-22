@@ -70,5 +70,5 @@ export const {
   session: {
     jwt: true,
   },
-  // Add further configurations as needed
+  //   Add further configurations as needed
 });

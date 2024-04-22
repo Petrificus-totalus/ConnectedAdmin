@@ -4,6 +4,7 @@ import { Button, Menu } from "antd";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./menulist.module.css";
+import { signOut } from "next-auth/react";
 
 export default function Menulist() {
   const path = usePathname();
@@ -29,7 +30,15 @@ export default function Menulist() {
           <Link href="/home/register">Register</Link>
         </Menu.Item>
       </Menu>
-      <Button className={styles.logout} onClick={() => router.replace("/")}>
+      <Button
+        className={styles.logout}
+        onClick={() => {
+          signOut({ redirect: false }).then(() => {
+            router.push("/"); // Redirect to the dashboard page after signing out
+          });
+          // router.refresh();
+        }}
+      >
         Logout
       </Button>
     </div>
