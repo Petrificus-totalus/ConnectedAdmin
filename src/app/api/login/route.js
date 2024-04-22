@@ -12,7 +12,6 @@ export const POST = async (request) => {
     const sql = `SELECT * FROM admin WHERE Account = ? AND Password = ?`;
     const data = [Account, Password];
     const [row] = await db.execute(sql, data);
-    console.log(row);
     if (row.length > 0) {
       db.end();
       return new NextResponse(JSON.stringify({ status: "success" }), {

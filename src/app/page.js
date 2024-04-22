@@ -1,68 +1,50 @@
 "use client";
-import { Form, Input, Button, message } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { message } from "antd";
 
-const LoginPage = () => {
+export default function LoginForm() {
+  const [Account, setAccount] = useState("");
+  const [Password, setPassword] = useState("");
   const router = useRouter();
-  const onFinish = async (values) => {
-    const formData = new FormData();
-    for (var key in values) {
-      formData.append(key, values[key]);
-    }
-    const response = await fetch("/api/login", {
-      method: "POST",
-      body: formData,
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const result = await signIn("credentials", {
+      redirect: false, // Do not redirect after sign in
+      Account,
+      Password,
     });
-    const res = await response.json();
-    if (res.status === "failed") {
-      message.error("Login failed");
-    } else if (res.status === "success") {
-      router.push("/home/usermanage");
+
+    if (!result.error) {
+      router.replace("/home/usermanage");
+      message.success("Logged in successfully");
+    } else {
+      message.error("Logged in failed");
+      console.error(result.error);
     }
   };
 
   return (
-    <div style={{ maxWidth: 300, margin: "100px auto" }}>
-      <Form
-        name="normal_login"
-        className="login-form"
-        initialValues={{ remember: true }}
-        onFinish={onFinish}
-      >
-        <Form.Item
-          name="Account"
-          rules={[{ required: true, message: "Please input your Account!" }]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="Account"
-          />
-        </Form.Item>
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="Account">Account:</label>
+      <input
+        type="text"
+        id="Account"
+        value={Account}
+        onChange={(e) => setAccount(e.target.value)}
+      />
 
-        <Form.Item
-          name="Password"
-          rules={[{ required: true, message: "Please input your Password!" }]}
-        >
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
-        </Form.Item>
+      <label htmlFor="Password">Password:</label>
+      <input
+        type="password"
+        id="Password"
+        value={Password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            Log in
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+      <button type="submit">Log In</button>
+    </form>
   );
-};
-
-export default LoginPage;
+}
