@@ -8,10 +8,13 @@ import styles from "./login.module.css";
 export default function LoginForm() {
   const [Account, setAccount] = useState("");
   const [Password, setPassword] = useState("");
+  const [logging, setLogging] = useState(false);
+
   const router = useRouter();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setLogging(true);
     const result = await signIn("credentials", {
       redirect: false, // Do not redirect after sign in
       Account,
@@ -24,6 +27,7 @@ export default function LoginForm() {
       message.error("Logged in failed");
       console.error(result.error);
     }
+    setLogging(false);
   };
 
   return (
@@ -51,7 +55,7 @@ export default function LoginForm() {
       />
 
       <button type="submit" className={styles.button}>
-        Log In
+        {logging ? "Logging......" : "Log In"}
       </button>
     </form>
   );
