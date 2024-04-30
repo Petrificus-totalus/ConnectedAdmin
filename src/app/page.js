@@ -3,6 +3,7 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { message } from "antd";
+import styles from "./login.module.css";
 
 export default function LoginForm() {
   const [Account, setAccount] = useState("");
@@ -16,7 +17,6 @@ export default function LoginForm() {
       Account,
       Password,
     });
-
     if (!result.error) {
       router.replace("/home/usermanage");
       message.success("Logged in successfully");
@@ -27,24 +27,32 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="Account">Account:</label>
+    <form onSubmit={handleSubmit} className={styles.formContainer}>
+      <label htmlFor="Account" className={styles.label}>
+        Account:
+      </label>
       <input
         type="text"
         id="Account"
         value={Account}
         onChange={(e) => setAccount(e.target.value)}
+        className={styles.input}
       />
 
-      <label htmlFor="Password">Password:</label>
+      <label htmlFor="Password" className={styles.label}>
+        Password:
+      </label>
       <input
         type="password"
         id="Password"
         value={Password}
         onChange={(e) => setPassword(e.target.value)}
+        className={styles.input}
       />
 
-      <button type="submit">Log In</button>
+      <button type="submit" className={styles.button}>
+        Log In
+      </button>
     </form>
   );
 }

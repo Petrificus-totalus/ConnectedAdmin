@@ -56,7 +56,10 @@ export const {
 
           if (isValid) {
             db.end();
-            return user; // Successfully authenticated
+            console.log("user");
+            console.log(user);
+            const { AdminID, Account } = user;
+            return { AdminID, Account }; // Successfully authenticated
           } else {
             db.end();
             throw new Error("Incorrect password");
@@ -67,6 +70,24 @@ export const {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      // When user signs in, add the user ID to the token
+      if (user) {
+        token.AdminID = user.AdminID;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      // Pass the user ID from the JWT to the session object
+      session.user.AdminID = token.AdminID;
+
+      return session;
+    },
+  },
+  // session: {
+  //   strategy: "jwt",
+  // },
   session: {
     jwt: true,
   },

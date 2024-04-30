@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,7 +14,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <AntdRegistry>
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <SessionProvider>{children}</SessionProvider>
+        </body>
       </AntdRegistry>
     </html>
   );
