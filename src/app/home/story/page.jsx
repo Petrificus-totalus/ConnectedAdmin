@@ -25,10 +25,6 @@ const StoryForm = () => {
 
   const { data: session } = useSession();
 
-  useEffect(() => {
-    form.setFieldsValue({ date: moment() });
-  }, [form]);
-
   const onFinish = async (values) => {
     setLoading(true);
     const formattedValues = {
